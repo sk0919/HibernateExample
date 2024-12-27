@@ -55,7 +55,7 @@ public class ClientTest {
     // Read operation
     private static void readEmployee(Session session) {
         // Get an employee by its ID (for example, ID = 1)
-        Employee employee = session.get(Employee.class, 1);
+        Employee employee = session.get(Employee.class, 2);
 
         if (employee != null) {
             System.out.println("Employee found: " + employee.getEmployeeName());
