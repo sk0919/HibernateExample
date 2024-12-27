@@ -1,1 +1,33 @@
--e "# Eclipse specific files\n.classpath\n.project\n.settings/\n\n# Maven specific files\ntarget/\npom.xml.tag\npom.xml.releaseBackup\npom.xml.versionsBackup\npom.xml.next\nrelease.properties\n\n# Java specific files\n*.class\n*.log\n*.jar\n*.war\n*.ear\n\n# OS generated files\n.DS_Store\nThumbs.db\n\n# IntelliJ IDEA specific files\n.idea/\n*.iml\n\n# Hibernate specific files\nhibernate.cfg.xml\n\n# Local configuration files\n*.local" 
+# Eclipse specific files
+.classpath
+.project
+.settings/
+
+# Maven specific files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Java specific files
+*.class
+*.log
+*.jar
+*.war
+*.ear
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IntelliJ IDEA specific files (if you use IntelliJ as well)
+.idea/
+*.iml
+
+# Hibernate specific files
+hibernate.cfg.xml
+
+# Local configuration files
+*.local
