@@ -67,12 +67,12 @@ public class ClientTest {
     // Update operation
     private static void updateEmployee(Session session) {
         // Assume the employee with ID 1 exists
-        Employee employee = session.get(Employee.class, 1);
+        Employee employee = session.get(Employee.class, 2);
 
         if (employee != null) {
             // Update employee details
-            employee.setEmployeeName("Updated Employee Name");
-            employee.setSalary(80000.00);
+//            employee.setEmployeeName("Updated Employee Name");
+            employee.setSalary(90000.00);
 
             // Start transaction
             Transaction transaction = session.beginTransaction();

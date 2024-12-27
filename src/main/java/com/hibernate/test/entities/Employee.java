@@ -10,8 +10,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import java.util.Date;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
+@DynamicUpdate // Add this annotation to enable dynamic update
 public class Employee {
 
     @Id
