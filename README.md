@@ -1267,3 +1267,146 @@ UPDATE Employee SET salary = ? WHERE employeeId = ?
 ### **Conclusion**
 
 The `@DynamicUpdate` annotation allows Hibernate to optimize the `UPDATE` statement by only updating the fields that have been modified. This reduces the amount of data sent to the database, improving performance, especially for entities with many fields. It's a useful feature when you want to reduce unnecessary database operations in updates. However, it should be used wisely, as it introduces slight overhead in tracking the changes.
+
+
+---
+
+In Hibernate, **`get()`** and **`load()`** are two methods used to fetch entities (objects) from the database. Both methods are used to retrieve data, but they differ in how they handle situations when the entity is not found.
+
+### **1. `get()` Method**
+
+The `get()` method is used to retrieve an entity by its primary key (ID). If the entity is not found in the database, it returns **`null`**.
+
+**Key Points:**
+- It immediately hits the database and retrieves the entity.
+- If the entity is not found, it returns `null`.
+- It works with both persistent and detached objects.
+- It is a safe and straightforward method.
+
+### **2. `load()` Method**
+
+The `load()` method is also used to retrieve an entity by its primary key, but it **does not immediately hit the database**. Instead, it returns a **proxy object** that will load the entity's data lazily when it's accessed. If the entity is not found, **`load()`** throws an exception (`org.hibernate.ObjectNotFoundException`).
+
+**Key Points:**
+- It uses lazy loading (only loads data when the entity's properties are accessed).
+- If the entity is not found, it throws an exception.
+- It is ideal when you want to load entities lazily or handle cases where you want a proxy instead of the real entity object.
+
+### **Detailed Example:**
+
+Let’s assume you have an `Employee` entity with a primary key `employeeId`.
+
+```java
+@Entity
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer employeeId;
+
+    private String name;
+    private Double salary;
+
+    // Getters and Setters
+}
+```
+
+### **Using `get()` Example:**
+
+```java
+// Open a session and begin a transaction
+Session session = sessionFactory.openSession();
+session.beginTransaction();
+
+// Fetch an employee by ID using get()
+Employee employee = session.get(Employee.class, 1); // ID = 1
+
+if (employee != null) {
+    System.out.println("Employee Name: " + employee.getName());
+} else {
+    System.out.println("Employee not found!");
+}
+
+session.getTransaction().commit();
+session.close();
+```
+
+**What happens here:**
+- Hibernate immediately queries the database to find the employee with `employeeId` = 1.
+- If no such employee exists, it returns `null`.
+- This method is simple and clear, so you typically use `get()` when you're sure the entity exists or you want to handle missing entities with `null`.
+
+### **Using `load()` Example:**
+
+```java
+// Open a session and begin a transaction
+Session session = sessionFactory.openSession();
+session.beginTransaction();
+
+// Fetch an employee by ID using load()
+Employee employee = session.load(Employee.class, 1); // ID = 1
+
+// Access the employee's data, which triggers a database query
+System.out.println("Employee Name: " + employee.getName());
+
+session.getTransaction().commit();
+session.close();
+```
+
+**What happens here:**
+- Hibernate **does not** immediately hit the database.
+- When you access the `employee.getName()` or any other property, **Hibernate queries the database** at that point (this is called lazy loading).
+- If no employee with ID 1 exists, Hibernate will throw an exception: `org.hibernate.ObjectNotFoundException`.
+
+### **Key Differences between `get()` and `load()`:**
+
+| Feature                      | `get()`                         | `load()`                        |
+|------------------------------|---------------------------------|---------------------------------|
+| **Immediate Database Query**  | Yes, immediately fetches data   | No, uses lazy loading (proxy)   |
+| **Return Value on Missing Entity** | Returns `null`                | Throws `ObjectNotFoundException` |
+| **Usage**                     | Use when you're okay with `null` if not found | Use when you need a proxy object and handle lazy loading |
+| **Performance**               | Slightly slower (as it hits the DB immediately) | More efficient for lazy loading but can cause errors if entity is not found |
+
+### **When to Use `get()` and `load()`?**
+- **Use `get()`** when you need immediate access to the entity and are okay with it being `null` if it doesn’t exist.
+- **Use `load()`** when you want to delay loading the entity data (lazy loading) or you want to handle proxy objects for performance reasons. However, be careful because `load()` will throw an exception if the entity is not found.
+
+### **Example Showing the Difference:**
+
+#### **Using `get()` (Safe approach)**:
+```java
+Session session = sessionFactory.openSession();
+session.beginTransaction();
+
+// Fetch an employee by ID (if not found, returns null)
+Employee employee = session.get(Employee.class, 1);
+if (employee != null) {
+    System.out.println("Employee: " + employee.getName());
+} else {
+    System.out.println("Employee not found!");
+}
+session.getTransaction().commit();
+session.close();
+```
+
+#### **Using `load()` (Lazy Loading with Exception)**:
+```java
+Session session = sessionFactory.openSession();
+session.beginTransaction();
+
+// Fetch an employee by ID (throws ObjectNotFoundException if not found)
+try {
+    Employee employee = session.load(Employee.class, 1);
+    System.out.println("Employee: " + employee.getName());
+} catch (org.hibernate.ObjectNotFoundException e) {
+    System.out.println("Employee not found!");
+}
+session.getTransaction().commit();
+session.close();
+```
+
+---
+
+### **Summary:**
+- **`get()`**: It retrieves the entity from the database immediately and returns `null` if not found.
+- **`load()`**: It returns a proxy object and loads the data lazily when needed. If the entity is not found, it throws an exception.
+
